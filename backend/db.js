@@ -6,4 +6,4 @@ const pool = mysql.createPool({
     database:"pretest22"
 })
 
-module.exports = pool.promise
+module.exports = pool.promise()

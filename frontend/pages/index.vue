@@ -17,14 +17,14 @@
                             <v-row>
                                 
                                 <v-col cols="12" md="12">
-                                    <v-text-field label="ชื่อผู้ใช้" prepend-inner-icon="mdi-account" v-model="username" :error-messages="error.username"></v-text-field>
+                                    <v-text-field label="ชื่อผู้ใช้" prepend-inner-icon="mdi-account" v-model="username" ></v-text-field>
                                 </v-col>
                                 <v-col cols="12" md="12">
-                                    <v-text-field label="รหัสผ่าน" v-model="password" :error-messages="password" :type="showPw ? 'text':'password'" :prepend-inner-icon="show ? 'mdi-eye':'mdi-eye-off'"  @click:prepend-inner="show = !show , showPw = !showPw"></v-text-field>
+                                    <v-text-field label="รหัสผ่าน" v-model="password"  :type="showPw ? 'text':'password'" :prepend-inner-icon="show ? 'mdi-eye':'mdi-eye-off'"  @click:prepend-inner="show = !show , showPw = !showPw"></v-text-field>
                                 </v-col>
                                 
                                 <v-col cols="12" md="12">
-                                    <v-select label="ประเภทสมาชิก" prepend-inner-icon="mdi-account-group" v-model="role" :error-messages="error.role" :items="typeR"></v-select>
+                                    <v-select label="ประเภทสมาชิก" prepend-inner-icon="mdi-account-group" v-model="role" :items="typeR"></v-select>
                                 </v-col>
 
                             </v-row>
