@@ -1,63 +1,72 @@
 const express = require('express')
-const path =require('path')
-const jwt = require('jsonwebtoken')
-const uploadDir = path.join(__dirname,'../../uploads/file_eva')
-const JWT_SECRET = process.env.JWT_SECRET
-const bc = require('bcrypt')
 const db = require('../../db')
-const {verifyToken,requireRole} = require('../../middleware/authmiddleware')
 const router = express.Router()
+const {requireRole,verifyToken} = require('../../middleware/authMiddleware')
+const path = require('path')
+const uploadDir = path.join(__dirname,'../../uploads/evadetail')
 
-router.get('/user/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async(req,res)=>{
-    try {
+router.get('/user/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async (req,res) => {
+    try{
         const id_member = req.user.id_member
         const id_eva = req.params.id_eva
-        const [rows ] = await db.query(`select * from tb_member m,tb_eva e,tb_system s,tb_commit c where c.id_member=? and c.id_eva=? and c.id_eva=e.id_eva and e.id_member=m.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,[id_member,id_eva])
+        const [rows] = await db.query(`select * from tb_member m,tb_eva e,tb_system s,tb_commit c where c.id_member=? and c.id_eva=? and c.id_eva=e.id_eva and e.id_member=m.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,[id_member,id_eva]
+)
         res.json(rows[0])
-    } catch (error) {
-        console.error('ERROR GET USER',error)
-        res.status(500).json({message:'ERROR GET USER'})
+    }catch(error){
+        console.error("Error GET User",error)
+        res.status(500).json({message:'Error GET User'})
     }
 })
 
-router.get('/topic',verifyToken,requireRole('ผู้รับการประเมินผล'),async(req,res)=>{
-    try {
-        const id_member =req.user.id_member
+router.get('/topic/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async (req,res) => {
+    try{
+        const id_member = req.user.id_member
+        const id_eva = req.params.id_eva
         const [topics] = await db.query(`select * from tb_topic`)
-        const [indicates] = await db.query(`select * from tb_indicate`)
-        const result = topics.map(t=>({
-            ...t, indicates:indicates.filter((i)=> i.id_topic === t.id_topic)
+        const [indicates] = await db.query(`select * from tb_indicate i,tb_evadetail d where i.id_indicate=d.id_indicate and status_eva in (1) and id_eva=?`,[id_eva])
+        const result = topics.map(t =>({
+            ...t,
+            indicates:indicates.filter((i) => i.id_topic === t.id_topic)
         }))
         res.json(result)
-    } catch (error) {
-        console.error('ERROR GET TOPICS',error)
-        res.status(500).json({message:'ERROR GET TOPICS'})
+    }catch(error){
+        console.error("Error GET User",error)
+        res.status(500).json({message:'Error GET User'})
     }
 })
 
-router.post('/save',verifyToken,requireRole('ผู้รับการประเมินผล'),async(req,res)=>{
-    try {
-        const id_member =req.user.id_member
-        const fileMap = {}
-        const files = req.files || {}
+router.post('/save/:id_eva',verifyToken,requireRole('กรรมการประเมิน'),async (req,res) => {
+    try{
+        const id_member = req.user.id_member
+        const id_eva = req.params.id_eva
         const scores = JSON.parse(req.body.scores)
-        await Promise.all(Object.entries(files).map(async ([key,file]) => {
-            const filename = Date.now()+Math.random().toString(36).slice(2)+path.extname(file.name)
-            await file.mv(path.join(uploadDir,filename))
-            fileMap[key] = filename
-        }))
-        const [[evaRow]] = await db.query(`select * from tb_member m,tb_eva e,tb_system s where e.id_member=? and e.id_member=m.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,[id_member]) 
-        const id_eva = evaRow.id_eva
-        for(const item of scores){
-            const filename = fileMap[item.file_key]
-            await db.query(`insert into tb_evadetail (id_eva,id_indicate,status_eva,detail_eva,score_member,file_eva) values(?,?,?,?,?,?)`,[id_eva,item.id_indicate,1,item.detail_eva,item.score,filename])
+        const detail_commit = req.body.detail_commit
+        const [[RowCommit]] = await db.query(`select * from tb_commit where id_member=? and id_eva=?`,[id_member,id_eva])
+        var statusCommit = 0
+        if(RowCommit.level_commit === 'ประธาน'){
+            statusCommit = 2
+        }else if(RowCommit.level_commit === 'กรรมการ'){
+            statusCommit = 3
+        }else if(RowCommit.level_commit === 'เลขา'){
+            statusCommit = 4
         }
-        const [[sumRow]] = await db.query(`select coalesce(sum(score_member*(select i.point_indicate from tb_indicate i where d.id_indicate=i.id_indicate)),0) as total from tb_evadetail d where id_eva=?`,[id_eva])
-        await db.query(`update tb_eva set status_eva=?,total_eva=? where id_eva=?`,[2,sumRow.total,id_eva])
-        res.json({message:'POST SCORES SUCESS!'})
-    } catch (error) {
-        console.error('ERROR POST SCORES',error)
-        res.status(500).json({message:'ERROR POST SCORES'})
+        for(const item of scores){
+            await db.query(
+                `insert into tb_evadetail (id_eva,id_indicate,status_eva,score_commit) values(?,?,?,?)`,
+                [id_eva,item.id_indicate,statusCommit,item.score]
+            )
+        }
+        const [[sumRow]] = await db.query(
+            `select coalesce(sum(score_commit*(select i.point_indicate from tb_indicate i where i.id_indicate=d.id_indicate)),0) as total
+            from tb_evadetail d where d.id_eva=?`,[id_eva]
+        )
+        await db.query(`update tb_eva set total_commit=? where id_eva=?`,[sumRow.total,id_eva])
+        await db.query(`update tb_commit set detail_commit=?,status_commit=? where id_eva=? and id_member=?`,[detail_commit,'y',id_eva,id_member])
+        
+        res.json({message:'POST Score Success'})
+    }catch(error){
+        console.error("Error POST Score",error)
+        res.status(500).json({message:'Error POST Score'})
     }
 })
 

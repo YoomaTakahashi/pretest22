@@ -52,7 +52,7 @@ const detail_commit = ref('')
 const id_eva = useRoute().params.id_eva
 
 const viweFile = (filename:string) =>{
-    const url = `http://localhost:3001/uploads/evadetail/${filename}`
+    const url = `http://localhost:3001/uploads/file_eva/${filename}`
     window.open(url,'_blank')
 }
 
@@ -80,6 +80,8 @@ onMounted(async()=>{
 })
 
 
+
+
 const saveScore = async()=>{
     const token = localStorage.getItem('token')
     const formData = new FormData()
@@ -101,10 +103,12 @@ const saveScore = async()=>{
     const detail_commitTo = ref('')
     if (detail_commit.value && detail_commit.value.trim()) {
         detail_commitTo.value = detail_commit.value
+    }else{
+        detail_commit.value = 'ไม่มี'
     }
     formData.append('detail_commit',detail_commitTo.value)
     try {
-        const res = await axios.post(`${commit}/save_score/save`,formData,{headers:{Authorization:`Bearer ${token}`}})
+        const res = await axios.post(`${commit}/save_score/save/${id_eva}`,formData,{headers:{Authorization:`Bearer ${token}`}})
         alert('ประเมินสำเร็จ')
         await Promise.all([fetchUser(),fetchTopic()])
         if(!res){
