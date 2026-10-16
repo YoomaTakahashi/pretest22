@@ -13,6 +13,8 @@ app.use(express.json())
 app.use(fileup())
 app.use('/uploads',express.static(path.join(__dirname,'./uploads')))
 
+const auth = require('./routes/auth')
+app.use('/api/auth',auth)
 const profile = require('./routes/profile')
 app.use ('/api/profile',profile)
 

@@ -7,7 +7,8 @@
                         <center><v-img src="/img/logo2.png" width="15%" class="mt-3"></v-img></center>
                         <h1 class="text-center text-h5">สมัครสมาชิก</h1>
                     </v-card-title>
-                    <v-card-text>
+                    <v-card-text class="bg-white">
+                        <br>
                         <v-form @submit.prevent="saveMember">
                             <v-row>
                                 <v-col cols="12" md="6">
@@ -35,7 +36,16 @@
                                     <v-file-input label="รูปภาพสมาชิก" v-model="pic_user" :error-messages="error.pic_user" accept=".png , .jpg" hint="รองรับเฉพาะไฟล์ PNG และ JPG เท่านั้น" persistent-hint></v-file-input>
                                 </v-col>
                             </v-row>
+                            <v-row>
+                                <v-col cols="12" md="12">
+                                    <center>
+                                        <v-btn class="text-center ma-2" type="submit" color="primary">สมัครสมาชิก</v-btn>
+                                        <v-btn class="text-center ma-2" type="reset" color="error">ยกเลิก</v-btn>
+                                    </center>
+                                </v-col>
+                            </v-row>
                         </v-form>
+                        <nuxt-link to="/" class="text-center text-blue text-decoration-none"><p>หากมีบัญชีอยู่แล้ว? เข้าสู่ระบบ</p></nuxt-link>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -44,6 +54,12 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios'
+import { api } from '~/API/base'
+
+definePageMeta({
+    layout:false
+})
 
 const error = ref<Record<string,string>>({})
 const pic_user = ref<File | null>(null)
@@ -79,7 +95,24 @@ function validateForm(){
 
     if(!f.role.trim())error.value.role = 'กรุณาเลือกประเภทสมาชิก'
 
-    return 
+    return Object.keys(error.value).length === 0
+}
+
+const saveMember = async()=>{
+
+    if(!validateForm())return
+    const formdata = new FormData
+    formdata.append('pic_user',pic_user.value!)
+    formdata.append('form',JSON.stringify(form.value))
+    try {
+        await axios.post(`${api}/auth/regis`,formdata)
+        alert('ทำรายการสำเร็จ')
+        navigateTo('/',{replace:true})
+    } catch (error) {
+        console.error("error regis",error);
+        
+    }
+
 }
 </script>
 
