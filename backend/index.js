@@ -79,6 +79,10 @@ app.use ('/api/Staff/score_commit',score_commit3)
 
 const status = require('./routes/Staff/status')
 app.use ('/api/Staff/status',status)
+//คอมมิท
+
+const show_eva = require('./routes/Commit/show_eva')
+app.use('/api/Commit/show_eva',show_eva)
 
 app.use((req,res)=> res.status(404).json({message:"Route not Found"}))
 app.listen(3001,()=>{
