@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import axios from 'axios'
-import { api, staff } from '~/API/base'
+import { api, staff,eva } from '~/API/base'
 
 const file = ref<File | null>(null)
 const error = ref<Record<string,string>>({})
@@ -45,37 +45,13 @@ const search = ref('')
 const dataResult = ref([])
 const name_doc = ref('')
 const token = import.meta.client ? localStorage.getItem('token'):null
-const saveMember = async()=>{
 
-    if(!name_doc.value && !file.value)return alert('กรอกข้อมูลให้ครบถ้วน')
-    const maxSize = 10*1024*1024
-    if(file.value?.size > maxSize){
-
-        alert("ไฟล์มีขาดเกิน 10MB")
-
-    }
-    const formdata = new FormData
-    formdata.append('name_doc',name_doc.value)
-    formdata.append('file',file.value!)
-    try {
-        
-        await axios.post(`${staff}/doc/save`,formdata,{headers:{Authorization:`Bearer ${token}`}})
-        await fetch()
-        alert('ทำรายการสำเร็จ')
-        name_doc.value = ''
-        file.value = null
-    } catch (error) {
-        console.error("error save",error);
-        
-    }
-
-}
 
 const fetch = async()=>{
 
     try {
-        const res = await axios.get(`${staff}/doc/show`,{headers:{Authorization:`Bearer ${token}`}})
-        dataResult.value = res.data
+        const res = await axios.get(`${eva}/docnoe/`,{headers:{Authorization:`Bearer ${token}`}})
+        result.value = res.data
     } catch (error) {
         console.error("error get",error);
         
@@ -83,16 +59,7 @@ const fetch = async()=>{
 
 }
 
-const result = computed(()=>{
-    if(!search.value)return dataResult.value
-    const s = search.value.toLowerCase()
-    return dataResult.value.filter((items:any)=>{
-        return(
-            items.name_doc?.toLowerCase().includes(s)
-        )
-        
-    })
-})
+const result = ref([])
 
 const formatDate = (dateStr:string)=>{
 
@@ -110,16 +77,7 @@ const formatDate = (dateStr:string)=>{
 //     form.value = {...items}
 // }
 
-const del = async(id_eva:any)=>{
-    if(!confirm("ต้องการลบข้อมูลชุดนี้ใช่หรือไม่"))return
-    try {
-        await axios.delete(`${staff}/doc/delete/${id_eva}`,{headers:{Authorization:`Bearer ${token}`}})
-        await fetch()
-    } catch (error) {
-        console.error("Error delete",error);
-        
-    }
-}
+
 
 const view = (filename:string)=>{
 

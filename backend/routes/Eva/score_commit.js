@@ -24,7 +24,7 @@ router.get('/score',verifyToken,requireRole('ผู้รับการปร�
         const id_member =req.user.id_member
         const [[evaRow]] = await db.query(`select * from tb_member m,tb_eva e,tb_system s where e.id_member=? and e.id_member=m.id_member and e.id_sys=s.id_sys order by e.id_eva desc`,[id_member]) 
         const id_eva = evaRow.id_eva
-        const [rows] = await db.query(`select i.id_indicate,i.point_indicate,d.status_eva,d.score_commit  from tb_indicate i join tb_evadetail d on d.id_indicate=i.id_indicate where d.id_eva=? and d.id_eva=? and status_eva in (2,3,4) order by d.id_indicate `,[id_eva])
+        const [rows] = await db.query(`select i.id_indicate,i.point_indicate,d.status_eva,d.score_commit  from tb_indicate i join tb_evadetail d on d.id_indicate=i.id_indicate where d.id_eva and d.id_eva=? and status_eva in (2,3,4) order by d.id_indicate `,[id_eva])
         const scores = {}
         rows.map(row=>{
             if(!scores[row.indicates]){
@@ -40,8 +40,8 @@ router.get('/score',verifyToken,requireRole('ผู้รับการปร�
         })
         res.json({scores})
     } catch (error) {
-        console.error('ERROR GET USER',error)
-        res.status(500).json({message:'ERROR GET USER'})
+        console.error('ERROR GET SCORES',error)
+        res.status(500).json({message:'ERROR GET SCORES'})
     }
 })
 module.exports = router
