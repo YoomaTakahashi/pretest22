@@ -2,7 +2,7 @@
     <v-container>
         <v-row>
             <v-col cols="12">
-                <v-form @submit.prevent="saveScore">
+                <v-form v-if="user.status_eva === 1" @submit.prevent="saveScore">
                     <h1 class="font-weight-bold">แบบประเมินตนเอง</h1>
                     <v-card class="pa-5 py-4" :elevation="5" rounded >
                         <p>ผู้ใช้ : {{ user.fname }} - {{ user.lname }} </p>
@@ -17,8 +17,8 @@
                                         {{ t+1 }}.{{ i+1 }} {{ indicate.name_indicate }} รายละเอียดตัวชี้วัด : {{ indicate.detail_indicate }} น้ำหนักคะแนน : {{ indicate.point_indicate }} คะแนนเต็ม : {{ indicate.point_indicate*4 }}
                                         <v-textarea label="คำอธิบายเพิ่มเติม (ถ้ามี)" rows="2" v-model="indicate.detail_eva" variant="solo-filled" ></v-textarea>
                                         <v-file-input v-model="indicate.file_eva" label="*** ใส่ได้เฉพาะนามสกุลไฟล์ .png .jpg .pdf" accept=".png,.jpg,.pdf" @change="onFilechange($event,topic.id_topic,indicate.id_indicate)" variant="solo-filled"></v-file-input>
-                                        <v-select label="ใส่คะแนน1-4" v-model="indicate.score" variant="solo-filled" :items="[1,2,3,4]" ></v-select>
-                                        <v-text-field label="ใส่คะแนน1-4" v-model="indicate.score" variant="solo-filled" type="number" min="0" @input="indicate.score > 4 ? indicate.score = 4 :null" ></v-text-field>
+                                        <v-select v-if="indicate.check_indicate === 'y'" label="ใส่คะแนน1-4" v-model="indicate.score" variant="solo-filled" :items="[1,2,3,4]" ></v-select>
+                                        <v-text-field v-else label="ใส่คะแนน1-4" v-model="indicate.score" variant="solo-filled" type="number" min="0" @input="indicate.score > 4 ? indicate.score = 4 :null" ></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-card>
@@ -28,6 +28,8 @@
                         <v-btn color="blue" type="submit">บันทึกคะแนน</v-btn>
                     </div>
                 </v-form>
+                <v-alert type="success" variant="tonal" color="green" v-else-if="user.status_eva === 2|| user.status_eva === 3">ประเมินสำเร็จ</v-alert>
+                <v-alert type="error" variant="tonal" color="error" v-else>ไม่มีแบบประเมิน</v-alert>
             </v-col>
         </v-row>
     </v-container>
@@ -92,9 +94,12 @@ const saveScore = async()=>{
     }
     formData.append('scores',JSON.stringify(allScore))
     try {
-        await axios.post(`${eva}/selfeva/save`,formData,{headers:{Authorization:`Bearer ${token}`}})
+        const res = await axios.post(`${eva}/selfeva/save`,formData,{headers:{Authorization:`Bearer ${token}`}})
         alert('ประเมินสำเร็จ')
         await Promise.all([fetch(),fetchTopic()])
+        if(!res){
+            console.log('Success')
+        }
     } catch (error) {
         console.error('ERROR POST SCORES !!!',error)
     }

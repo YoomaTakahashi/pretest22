@@ -5,7 +5,7 @@
                 <v-card>
                     <v-card-title>
                        
-                        <h1 class="text-center text-h5">จัดการแบบการรประเมิน </h1>
+                        <h1 class="text-center text-h5">จัดการแบบการประเมิน </h1>
                     </v-card-title>
                     <v-card-text>
                         <br>

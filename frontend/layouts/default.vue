@@ -67,7 +67,7 @@ const roles = [
     {title:'ผลการประเมินกรรมการประเมิน',to:'/Staff/Score_commitList',role:'ฝ่ายบุคลากร'},
     {title:'สถานะการประเมินผู้รับการประเมินผล',to:'/Staff/Status_eva',role:'ฝ่ายบุคลากร'},
     {title:'สถานะการประเมินกรรมการประเมิน',to:'/Staff/Status_commit',role:'ฝ่ายบุคลากร'},
-    {title:'เอกสารหรือคู่มือการรประเมิน',to:'/Staff/Document',role:'ฝ่ายบุคลากร'},
+    {title:'เอกสารหรือคู่มือการประเมิน',to:'/Staff/Document',role:'ฝ่ายบุคลากร'},
     {title:'รายงาน',to:'/Staff/Report',role:'ฝ่ายบุคลากร'},
     {title:'การสำรองข้อมูล',to:'/Staff/Backup',role:'ฝ่ายบุคลากร'},
     //eva nav
