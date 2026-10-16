@@ -50,7 +50,7 @@ const token = import.meta.client ? localStorage.getItem('token'):null
 const fetch = async()=>{
 
     try {
-        const res = await axios.get(`${eva}/docnoe/`,{headers:{Authorization:`Bearer ${token}`}})
+        const res = await axios.get(`${api}/docnoe/`,{headers:{Authorization:`Bearer ${token}`}})
         result.value = res.data
     } catch (error) {
         console.error("error get",error);

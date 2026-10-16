@@ -28,8 +28,8 @@
                                     <td class="border pa-2 text-center" style="width: 10%;">{{ indicate.point_indicate }}</td>
                                     <td class="border pa-2 text-center" style="width: 10%;">{{ indicate.point_indicate*4 }}</td>
                                     <td class="border pa-2 text-center" style="width: 10%;">{{ scores[indicate.id_indicate]?. a ?? 'รอประธานประเมิน' }}</td>
-                                    <td class="border pa-2 text-center" style="width: 10%;">{{ scores[indicate.id_indicate]?. a ?? 'รอกรรมการประเมิน' }}</td>
-                                    <td class="border pa-2 text-center" style="width: 10%;">{{ scores[indicate.id_indicate]?. a ?? 'รอเลขาประเมิน' }}</td>
+                                    <td class="border pa-2 text-center" style="width: 10%;">{{ scores[indicate.id_indicate]?. b ?? 'รอกรรมการประเมิน' }}</td>
+                                    <td class="border pa-2 text-center" style="width: 10%;">{{ scores[indicate.id_indicate]?. c ?? 'รอเลขาประเมิน' }}</td>
                                     <td class="border pa-2 text-center" style="width: 10%;">{{ (((scores[indicate.id_indicate]?. a ?? 0)+(scores[indicate.id_indicate]?. b ?? 0)+(scores[indicate.id_indicate]?. c ?? 0))/3).toFixed(2) }}</td>
                                 </tr>
                             </v-table>
