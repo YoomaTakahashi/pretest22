@@ -102,7 +102,7 @@ const saveMember = async()=>{
     const token = localStorage.getItem('token')
     if(!validateForm())return
     try {
-        await axios.post(`${eva}/edit_eva/`,form.value,{headers:{Authorization:`Bearer ${token}`}})
+        await axios.put(`${eva}/edit_eva/`,form.value,{headers:{Authorization:`Bearer ${token}`}})
         alert('แก้ไขสำเร็จ')
         window.location.reload()
     } catch (error) {

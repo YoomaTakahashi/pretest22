@@ -1,7 +1,15 @@
 <template>
-    <div>
-
-    </div>
+    <v-container>
+        <v-row>
+            <v-col cols="12">
+                <h1 class="font-weight-bold">ตรวจสอบผลการประเมิน</h1>
+            </v-col>
+            <v-col cols="12">
+                <nuxt-link to="/Evaluatee/Score_member"><v-btn color="blue">ผลการประเมินผู้รับการประเมินผล</v-btn></nuxt-link> &nbsp;&nbsp;
+                <nuxt-link to="/Evaluatee/Score_commit"><v-btn color="green">ผลการประเมินกรรมการประเมิน</v-btn></nuxt-link>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script setup lang="ts">

@@ -84,7 +84,7 @@ const saveScore = async()=>{
                 id_indicate:i.id_indicate,
                 score:i.score,
                 detail_eva:i.detail_eva,
-                file_eva:file ? `file_${key}` :null
+                file_key:file ? `file_${key}` :null
             }
         })
     )
