@@ -19,7 +19,7 @@
                                 <v-col cols="12" md="12">
                                     <center>
                                         <v-btn class="text-center ma-2" type="submit" color="primary">{{ form.id_topic ? 'อัปเดต':'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center ma-2" type="reset" color="error">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-2" @click="reset()" color="error">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -118,7 +118,10 @@ const result = computed(()=>{
     if(!search.value)return dataResult.value
     const s = search.value.toLowerCase()
     return dataResult.value.filter((items:any)=>{
-        items.name_topic?.toLowerCase().includes(s)
+        return(
+            items.name_topic?.toLowerCase().includes(s)
+        )
+        
     })
 })
 
@@ -130,6 +133,7 @@ const del = async(id_topic:any)=>{
     if(!confirm("ต้องการลบข้อมูลชุดนี้ใช่หรือไม่"))return
     try {
         await axios.delete(`${staff}/topic/delete/${id_topic}`,{headers:{Authorization:`Bearer ${token}`}})
+        await fetch()
     } catch (error) {
         console.error("Error delete",error);
         

@@ -15,9 +15,9 @@
                                     <v-select label="ผู้รับการประเมินผล" v-model="form.id_member" :error-messages="error.id_member" :items="eva.map((t)=>({title:`${t.fname} ${t.lname}`,value:t.id_member}))"></v-select>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-select label="รอบการประเมิน" v-model="form.id_sys" :error-messages="error.id_sys" :items="round.map((t)=>({title:`${t.fname} ${t.lname}`,value:t.id_member}))"></v-select>
+                                    <v-select label="รอบการประเมิน" v-model="form.id_sys" :error-messages="error.id_sys" :items="round.map((t)=>({title:`รอบการประเมินที่:${t.round_sys} ปีการประเมิน${t.year_sys}`,value:t.id_sys}))"></v-select>
                                 </v-col>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" md="12">
                                     <v-text-field label="วันที่ออกแบบประเมิน" v-model="form.day_eva" :error-messages="error.day_eva" type="date"></v-text-field>
                                 </v-col>
                             </v-row>
@@ -25,7 +25,7 @@
                                 <v-col cols="12" md="12">
                                     <center>
                                         <v-btn class="text-center ma-2" type="submit" color="primary">{{ form.id_eva ? 'อัปเดต':'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center ma-2" type="reset" color="error">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-2" @click="reset()" color="error">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -127,6 +127,10 @@ const fetch = async()=>{
     try {
         const res = await axios.get(`${staff}/eva/show`,{headers:{Authorization:`Bearer ${token}`}})
         dataResult.value = res.data
+        const res2 = await axios.get(`${staff}/member/showE`,{headers:{Authorization:`Bearer ${token}`}})
+        eva.value = res2.data
+        const res3 = await axios.get(`${staff}/system/show`,{headers:{Authorization:`Bearer ${token}`}})
+        round.value = res3.data
     } catch (error) {
         console.error("error get",error);
         
@@ -138,8 +142,11 @@ const result = computed(()=>{
     if(!search.value)return dataResult.value
     const s = search.value.toLowerCase()
     return dataResult.value.filter((items:any)=>{
-        items.fname?.toLowerCase().includes(s) || 
+        return(
+            items.fname?.toLowerCase().includes(s) || 
         items.lname?.toLowerCase().includes(s) 
+        )
+        
     })
 })
 const formatDate = (dateStr:string)=>{
@@ -163,6 +170,7 @@ const del = async(id_eva:any)=>{
     if(!confirm("ต้องการลบข้อมูลชุดนี้ใช่หรือไม่"))return
     try {
         await axios.delete(`${staff}/eva/delete/${id_eva}`,{headers:{Authorization:`Bearer ${token}`}})
+        await fetch()
     } catch (error) {
         console.error("Error delete",error);
         

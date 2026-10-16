@@ -31,7 +31,7 @@
                                 <v-col cols="12" md="12">
                                     <center>
                                         <v-btn class="text-center ma-2" type="submit" color="primary">{{ form.id_indicate ? 'อัปเดต':'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center ma-2" type="reset" color="error">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-2" @click="reset()" color="error">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -152,7 +152,10 @@ const result = computed(()=>{
     if(!search.value)return dataResult.value
     const s = search.value.toLowerCase()
     return dataResult.value.filter((items:any)=>{
-        items.name_indicate?.toLowerCase().includes(s)
+        return(
+            items.name_indicate?.toLowerCase().includes(s)
+        )
+        
     })
 })
 
@@ -164,6 +167,7 @@ const del = async(id_indicate:any)=>{
     if(!confirm("ต้องการลบข้อมูลชุดนี้ใช่หรือไม่"))return
     try {
         await axios.delete(`${staff}/indicate/delete/${id_indicate}`,{headers:{Authorization:`Bearer ${token}`}})
+        await fetch()
     } catch (error) {
         console.error("Error delete",error);
         
