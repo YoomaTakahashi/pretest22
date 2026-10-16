@@ -69,8 +69,8 @@ router.get('/showC',verifyToken,requireRole('ฝ่ายบุคลากร')
         res.json(rows)
 
     } catch (error) {
-        console.error("Error delete",error);
-        res.status(500).json({message:"Error delete"})        
+        console.error("Error get",error);
+        res.status(500).json({message:"Error get"})        
     }
 })
 
