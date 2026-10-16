@@ -81,7 +81,7 @@ import { api, staff } from '~/API/base'
 
 const error = ref<Record<string,string>>({})
 const pic_user = ref<File | null>(null)
-const typeR = ['ฝ่ายบุคลากร','ผู้รับการประเมินผล','กรรมการประเมิน']
+const typeR = ['ผู้รับการประเมินผล']
 const search = ref('')
 const dataResult = ref([])
 const show = ref(false)
@@ -97,7 +97,15 @@ const form = ref({
 })
 const reset = ()=>{
 
-    form.va
+    form.value = {
+        id_member:null,
+        fname:'',
+        lname:'',
+        email:'',
+        username:'',
+        password:'',
+        role:''
+    }
 
 }
 const emailRegex = /^[^\s]+@[^\s]+\.[^\s]{2,}$/i
@@ -167,7 +175,21 @@ const result = computed(()=>{
     })
 })
 
-const 
+const edit = (items:any)=>{
+    form.value = {...items}
+}
+
+const del = async(id_member:any)=>{
+    if(!confirm("ต้องการลบข้อมูลชุดนี้ใช่หรือไม่"))return
+    try {
+        await axios.delete(`${staff}/member/delete/${id_member}`,{headers:{Authorization:`Bearer ${token}`}})
+    } catch (error) {
+        console.error("Error delete",error);
+        
+    }
+}
+
+onMounted(fetch)
 
 </script>
 
