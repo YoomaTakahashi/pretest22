@@ -7,7 +7,7 @@ const router = express.Router()
 router.post('/save',verifyToken,requireRole('ฝ่ายบุคลากร'),async(req,res)=>{
     try {
         const {id_member,id_sys,day_eva} = req.body
-        const [rows] = await db.query(`insert into tb_eva(id_member,id_sys,day_eva) values(?,?,?,?,?)`,[id_topic,name_indicate,detail_indicate,point_indicate,check_indicate])
+        const [rows] = await db.query(`insert into tb_eva(id_member,id_sys,day_eva,status_eva) values(?,?,?,?)`,[id_member,id_sys,day_eva,1])
         res.json(rows)
     } catch (error) {
         console.error("Error save",error);
@@ -15,12 +15,12 @@ router.post('/save',verifyToken,requireRole('ฝ่ายบุคลากร')
     }
 })
 
-router.put('/update/:id_indicate',verifyToken,requireRole('ฝ่ายบุคลากร'),async(req,res)=>{
+router.put('/update/:id_eva',verifyToken,requireRole('ฝ่ายบุคลากร'),async(req,res)=>{
     try {
-        const {id_indicate} = req.params
-        const {id_topic,name_indicate,detail_indicate,point_indicate,check_indicate} = req.body
+        const {id_eva} = req.params
+        const {id_member,id_sys,day_eva} = req.body
         
-        const [rows] = await db.query(`update tb_indicate set id_topic=?,name_indicate=?,detail_indicate=?,point_indicate=?,check_indicate=? where id_indicate=?`,[id_topic,name_indicate,detail_indicate,point_indicate,check_indicate,id_indicate])
+        const [rows] = await db.query(`update tb_eva set id_member=?,id_sys=?,day_eva=? where id_eva=?`,[id_member,id_sys,day_eva,id_eva])
         res.json(rows)
 
     } catch (error) {
@@ -29,11 +29,11 @@ router.put('/update/:id_indicate',verifyToken,requireRole('ฝ่ายบุค
     }
 })
 
-router.delete('/delete/:id_indicate',verifyToken,requireRole('ฝ่ายบุคลากร'),async(req,res)=>{
+router.delete('/delete/:id_eva',verifyToken,requireRole('ฝ่ายบุคลากร'),async(req,res)=>{
     try {
-        const {id_indicate} = req.params
+        const {id_eva} = req.params
         
-        const [rows] = await db.query(`delete from tb_indicate where id_indicate=?`,[id_indicate])
+        const [rows] = await db.query(`delete from tb_eva where id_eva=?`,[id_eva])
         res.json(rows)
 
     } catch (error) {
@@ -45,7 +45,7 @@ router.delete('/delete/:id_indicate',verifyToken,requireRole('ฝ่ายบุ
 router.get('/show',verifyToken,requireRole('ฝ่ายบุคลากร'),async(req,res)=>{
     try {
       
-        const [rows] = await db.query(`select * from tb_topic t,tb_indicate i where t.id_topic = i.id_topic order by id_indicate desc`)
+        const [rows] = await db.query(`select * from tb_eva e,tb_member m,tb_system s where e.id_member = m.id_member and e.id_sys = s.id_sys order by id_eva desc`)
 
         res.json(rows)
 

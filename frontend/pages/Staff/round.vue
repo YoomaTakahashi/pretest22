@@ -23,7 +23,7 @@
                                 <v-col cols="12" md="6">
                                     <v-text-field label="ปีการประเมิน" v-model="form.year_sys" :error-messages="error.year_sys" type="number"></v-text-field>
                                 </v-col>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" md="12">
                                     <v-select label="ประเภทตัวเลือก" v-model="form.status_sys" :error-messages="error.status_sys" :items="[{title:'เปิด',value:'y'},{title:'ปิด',value:'n'}]"></v-select>
                                 </v-col>
                             </v-row>
@@ -31,7 +31,7 @@
                                 <v-col cols="12" md="12">
                                     <center>
                                         <v-btn class="text-center ma-2" type="submit" color="primary">{{ form.id_sys ? 'อัปเดต':'บันทึก' }}</v-btn>
-                                        <v-btn class="text-center ma-2" type="reset" color="error">ยกเลิก</v-btn>
+                                        <v-btn class="text-center ma-2" @click="reset()" color="error">ยกเลิก</v-btn>
                                     </center>
                                 </v-col>
                             </v-row>
@@ -175,6 +175,7 @@ const del = async(id_sys:any)=>{
     if(!confirm("ต้องการลบข้อมูลชุดนี้ใช่หรือไม่"))return
     try {
         await axios.delete(`${staff}/system/delete/${id_sys}`,{headers:{Authorization:`Bearer ${token}`}})
+        await fetch()
     } catch (error) {
         console.error("Error delete",error);
         
