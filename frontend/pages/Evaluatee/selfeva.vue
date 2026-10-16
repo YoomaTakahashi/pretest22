@@ -82,7 +82,7 @@ const saveScore = async()=>{
                 id_indicate:i.id_indicate,
                 score:i.score,
                 detail_eva:i.detail_eva,
-                file_eva:file ? `file_${key}` :null
+                file_key:file ? `file_${key}` :null
             }
         })
     )
@@ -92,13 +92,15 @@ const saveScore = async()=>{
     }
     formData.append('scores',JSON.stringify(allScore))
     try {
-        await axios.get(`${eva}/selfeva/save`,formData,{headers:{Authorization:`Bearer ${token}`}})
+        await axios.post(`${eva}/selfeva/save`,formData,{headers:{Authorization:`Bearer ${token}`}})
         alert('ประเมินสำเร็จ')
         await Promise.all([fetch(),fetchTopic()])
     } catch (error) {
         console.error('ERROR POST SCORES !!!',error)
     }
 }
+
+
 </script>
 
 <style scoped>

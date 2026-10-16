@@ -6,7 +6,7 @@ exports.verifyToken = (req,res,next) =>{
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({message:'Invalid Token no or more'})
     }
-    const token = authHeader.split(" ")[0]
+    const token = authHeader.split(" ")[1]
     try {
         req.user = jwt.verify(token,JWT_SECRET)
         next()
